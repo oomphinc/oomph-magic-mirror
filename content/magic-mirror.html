@@ -14,7 +14,7 @@
 
     <h1>Magic Mirror</h1>
 
-    <img id="start_img" src="pennywise.jpg">
+    <img id="start_img" src="mic.gif">
     <span id="ws-unsupported" class="api-support hidden">API not supported</span>
 
     <h2>Transcription</h2>
@@ -54,11 +54,8 @@
           for (var i = event.resultIndex; i < event.results.length; i++) {
             if (event.results[i].isFinal) {
               transcription.textContent = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
-              if (event.results[i][0].transcript === 'hello') {
-                document.getElementById("start_img").style.display = "block";
-              } else {
-                transcription.textContent += event.results[i][0].transcript;
-              }
+            } else {
+              transcription.textContent += event.results[i][0].transcript;
             }
           }
         };
