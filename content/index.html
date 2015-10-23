@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Web Speech API Demo</title>
-
+    <title>Oomph Magic Mirror</title>
+	<link rel="stylesheet" href="content/fonts.css" />
     <style>
       body
       {
@@ -60,16 +60,28 @@
 	  }
 	  #weather {
 		  position: absolute;
-		  top: 0;
+		  bottom: 0;
 		  right: 0;
-		  width: 50%;
+		  width: 100%;
 		  box-sizing: border-box;
 		  font-size: 2em;
-		  padding: 1em;
+		  padding-bottom: 1em;
 	  }
 	  #weather ul {
 		  list-style-type: none;
-		  text-align: right;
+		  text-align: center;
+		  display: flex;
+		  width: 100%;
+		  margin: 0;
+		  padding: 0;
+		  flex-wrap: nowrap;
+	  }
+	  #weather li {
+		  flex-grow: 1;
+	  }
+	  #weather li span {
+		  display: block;
+		  padding-bottom: 1em;
 	  }
 	  #speech {
 		  display: none;
@@ -186,12 +198,35 @@
 	}
 	setInterval('updateClock()', 200);
 
+	function weatherIcon(forecast) {
+		var icon = '';
+		switch (forecast) {
+			case "Clear":
+				icon = 'wi-day-sunny';
+				break;
+			case "Clouds":
+				icon = 'wi-day-cloudy';
+				break;
+			case "Rain":
+				icon = 'wi-day-rain';
+				break;
+			default:
+				icon = 'wi-day-sunny';
+		}
+
+		return icon;
+	}
+	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	jQuery.ajax({
-		url: "http://api.openweathermap.org/data/2.5/forecast/city?id=5224151&APPID=e1078351c4ebfc96f2fb7b424f0a43fb&units=imperial&cnt=5",
+		url: "http://api.openweathermap.org/data/2.5/forecast/daily?id=5224151&APPID=e1078351c4ebfc96f2fb7b424f0a43fb&units=imperial&cnt=5",
 		success: function(data) {
 			console.log( data );
 			$.each(data.list, function(){
-				jQuery('#weather ul').append('<li>' + this.main.temp + '&deg;F</li>');
+				var dateobj = new Date(this.dt*1000);
+				var month = months[dateobj.getMonth()];
+				var date = dateobj.getDate();
+				var weathericon = weatherIcon(this.weather[0].main);
+				jQuery('#weather ul').append('<li ><span class="date wi ' + weathericon + '">' + month + ' ' + date + '</span> ' + this.temp.day + '&deg;F</li>');
 			});
 		}
 
