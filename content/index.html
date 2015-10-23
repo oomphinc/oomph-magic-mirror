@@ -50,11 +50,26 @@
       }
 	  #clock {
 		  position: absolute;
-		  top: 1em;
-		  left: 1em;
-		  width: 35%;
+		  top: 0;
+		  left: 0;
+		  width: 50%;
 		  box-sizing: border-box;
 		  font-size: 5em;
+		  padding: 1em;
+		  white-space: nowrap;
+	  }
+	  #weather {
+		  position: absolute;
+		  top: 0;
+		  right: 0;
+		  width: 50%;
+		  box-sizing: border-box;
+		  font-size: 2em;
+		  padding: 1em;
+	  }
+	  #weather ul {
+		  list-style-type: none;
+		  text-align: right;
 	  }
 	  #speech {
 		  display: none;
@@ -63,6 +78,7 @@
   </head>
   <body>
 	  <div id="clock"></div>
+	  <div id="weather"><ul></ul></div>
 	  <div id="speech">
 	    <textarea id="transcription" readonly="readonly"></textarea>
 
@@ -81,6 +97,7 @@
 	    <span id="ws-unsupported" class="hidden">API not supported</span>
 	</div>
 
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script>
       // Test browser support
       window.SpeechRecognition = window.SpeechRecognition       ||
@@ -168,6 +185,17 @@
 		elem.innerHTML = hours + ':' + minutes + ' ' + ampm;
 	}
 	setInterval('updateClock()', 200);
+
+	jQuery.ajax({
+		url: "http://api.openweathermap.org/data/2.5/forecast/city?id=5224151&APPID=e1078351c4ebfc96f2fb7b424f0a43fb&units=imperial&cnt=5",
+		success: function(data) {
+			console.log( data );
+			$.each(data.list, function(){
+				jQuery('#weather ul').append('<li>' + this.main.temp + '&deg;F</li>');
+			});
+		}
+
+	});
 	</script>
 
     <script type="text/javascript">
