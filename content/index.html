@@ -33,7 +33,6 @@
 	  <div id="clock"></div>
 	  <div id="weather"><ul></ul></div>
 	  <div id="speech"></div>
-
 	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script>
       // Test browser support
@@ -41,9 +40,9 @@
         window.webkitSpeechRecognition  ||
         null;
       if (window.SpeechRecognition === null) {
-        document.getElementById('ws-unsupported').classList.remove('hidden');
-        document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
-        document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
+        //document.getElementById('ws-unsupported').classList.remove('hidden');
+        //document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
+        //document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
       } else {
         var recognizer = new window.SpeechRecognition();
         var transcription = document.getElementById('transcription');
