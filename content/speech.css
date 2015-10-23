@@ -6,10 +6,9 @@
 }
 body
 {
-  max-width: 500px;
-  margin: 2em auto;
-  padding: 0 0.5em;
-  font-size: 20px;
+  background: #000;
+  color: #fff;
+  font-family: sans-serif;
 }
 h1
 {
@@ -55,4 +54,48 @@ h1
   display: none;
   transform:scale(2.6, 2.6);
   width: 100%;
+}
+.button-demo
+{
+  padding: 0.5em;
+  display: inline-block;
+  margin: 1em auto;
+}
+#clock {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50%;
+	box-sizing: border-box;
+	font-size: 5em;
+	padding: 1em;
+	white-space: nowrap;
+}
+#weather {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 2em;
+	padding-bottom: 1em;
+}
+#weather ul {
+	list-style-type: none;
+	text-align: center;
+	display: flex;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	flex-wrap: nowrap;
+}
+#weather li {
+	flex-grow: 1;
+}
+#weather li span {
+	display: block;
+	padding-bottom: 1em;
+}
+#speech {
+	display: none;
 }

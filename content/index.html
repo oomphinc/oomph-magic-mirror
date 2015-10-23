@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <title>Magic Mirror</title>
-
+    <title>Oomph Magic Mirror</title>
+	<link rel="stylesheet" href="content/fonts.css" />
     <link rel="stylesheet" type="text/css" href="speech.css">
 
   </head>
@@ -15,9 +15,6 @@
     <h1>Magic Mirror</h1>
 
     <img id="start_img" src="pennywise.jpg">
-    <span id="ws-unsupported" class="api-support hidden">API not supported</span>
-
-    <h2>Transcription</h2>
     <textarea id="transcription" readonly="readonly"></textarea>
 
     <span>Results:</span>
@@ -33,6 +30,11 @@
       <button id="clear-all" class="button-demo">Clear all</button>
     </div>
 
+	  <div id="clock"></div>
+	  <div id="weather"><ul></ul></div>
+	  <div id="speech"></div>
+
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script>
       // Test browser support
       window.SpeechRecognition = window.SpeechRecognition        ||
@@ -85,6 +87,78 @@
           log.textContent = '';
         });
       }
+
+	function updateClock() {
+		// Gets the current time
+		var now = new Date();
+
+		// Get the hours, minutes and seconds from the current time
+		var hours = now.getHours();
+		var minutes = now.getMinutes();
+		var ampm = "AM";
+
+		// Format hours, minutes and seconds
+		if (hours > 12) {
+			hours = hours - 12;
+			ampm = "PM";
+		}
+		if (hours < 10) {
+			hours = "0" + hours;
+		}
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
+
+		// Gets the element we want to inject the clock into
+		var elem = document.getElementById('clock');
+
+		// Sets the elements inner HTML value to our clock data
+		elem.innerHTML = hours + ':' + minutes + ' ' + ampm;
+	}
+	setInterval('updateClock()', 200);
+
+	function weatherIcon(forecast) {
+		var icon = '';
+		switch (forecast) {
+			case "Clear":
+				icon = 'wi-day-sunny';
+				break;
+			case "Clouds":
+				icon = 'wi-day-cloudy';
+				break;
+			case "Rain":
+				icon = 'wi-day-rain';
+				break;
+			default:
+				icon = 'wi-day-sunny';
+		}
+
+		return icon;
+	}
+	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	jQuery.ajax({
+		url: "http://api.openweathermap.org/data/2.5/forecast/daily?id=5224151&APPID=e1078351c4ebfc96f2fb7b424f0a43fb&units=imperial&cnt=5",
+		success: function(data) {
+			console.log( data );
+			$.each(data.list, function(){
+				var dateobj = new Date(this.dt*1000);
+				var month = months[dateobj.getMonth()];
+				var date = dateobj.getDate();
+				var weathericon = weatherIcon(this.weather[0].main);
+				jQuery('#weather ul').append('<li ><span class="date wi ' + weathericon + '">' + month + ' ' + date + '</span> ' + this.temp.day + '&deg;F</li>');
+			});
+		}
+
+	});
+	</script>
+
+    <script type="text/javascript">
+      var u = new SpeechSynthesisUtterance();
+      u.text = 'You are next.';
+      u.lang = 'en-US';
+      u.rate = 1.2;
+      u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
+      speechSynthesis.speak(u);
     </script>
   </body>
 </html>
