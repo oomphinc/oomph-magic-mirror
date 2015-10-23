@@ -11,6 +11,9 @@
         max-width: 500px;
         margin: 2em auto;
         font-size: 20px;
+		background: #000;
+		color: #fff;
+		font-family: sans-serif;
       }
 
       h1
@@ -45,26 +48,38 @@
         display: inline-block;
         margin: 1em auto;
       }
+	  #clock {
+		  position: absolute;
+		  top: 1em;
+		  left: 1em;
+		  width: 35%;
+		  box-sizing: border-box;
+		  font-size: 5em;
+	  }
+	  #speech {
+		  display: none;
+	  }
     </style>
   </head>
   <body>
-    <h1>Web Speech API</h1>
-    <h2>Transcription</h2>
-    <textarea id="transcription" readonly="readonly"></textarea>
+	  <div id="clock"></div>
+	  <div id="speech">
+	    <textarea id="transcription" readonly="readonly"></textarea>
 
-    <span>Results:</span>
-    <label><input type="radio" name="recognition-type" value="final" checked="checked" /> Final only</label>
-    <label><input type="radio" name="recognition-type" value="interim" /> Interim</label>
+	    <span>Results:</span>
+	    <label><input type="radio" name="recognition-type" value="final" checked="checked" /> Final only</label>
+	    <label><input type="radio" name="recognition-type" value="interim" /> Interim</label>
 
-    <h3>Log</h3>
-    <div id="log"></div>
+	    <h3>Log</h3>
+	    <div id="log"></div>
 
-    <div class="buttons-wrapper">
-      <button id="button-play-ws" class="button-demo">Play demo</button>
-      <button id="button-stop-ws" class="button-demo">Stop demo</button>
-      <button id="clear-all" class="button-demo">Clear all</button>
-    </div>
-    <span id="ws-unsupported" class="hidden">API not supported</span>
+	    <div class="buttons-wrapper">
+	      <button id="button-play-ws" class="button-demo">Play demo</button>
+	      <button id="button-stop-ws" class="button-demo">Stop demo</button>
+	      <button id="clear-all" class="button-demo">Clear all</button>
+	    </div>
+	    <span id="ws-unsupported" class="hidden">API not supported</span>
+	</div>
 
     <script>
       // Test browser support
@@ -124,7 +139,36 @@
           log.textContent = '';
         });
       }
-    </script>
+
+	function updateClock() {
+		// Gets the current time
+		var now = new Date();
+
+		// Get the hours, minutes and seconds from the current time
+		var hours = now.getHours();
+		var minutes = now.getMinutes();
+		var ampm = "AM";
+
+		// Format hours, minutes and seconds
+		if (hours > 12) {
+			hours = hours - 12;
+			ampm = "PM";
+		}
+		if (hours < 10) {
+			hours = "0" + hours;
+		}
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
+
+		// Gets the element we want to inject the clock into
+		var elem = document.getElementById('clock');
+
+		// Sets the elements inner HTML value to our clock data
+		elem.innerHTML = hours + ':' + minutes + ' ' + ampm;
+	}
+	setInterval('updateClock()', 200);
+	</script>
 
     <script type="text/javascript">
       var u = new SpeechSynthesisUtterance();
