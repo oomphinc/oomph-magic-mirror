@@ -1,0 +1,32 @@
+{
+  "name": "magic-mirror",
+  "version": "0.0.0",
+  "description": "A node application for the Magic Mirror arduino project.",
+  "homepage": "",
+  "author": {
+    "name": "Jon Clark",
+    "email": "jon.c.clark11@gmail.com",
+    "url": ""
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "keywords": [],
+  "repository": "joncclark11/magic-mirror",
+  "devDependencies": {
+    "gulp": "^3.6.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-exclude-gitignore": "^1.0.0",
+    "gulp-istanbul": "^0.9.0",
+    "gulp-mocha": "^2.0.0",
+    "gulp-plumber": "^1.0.0",
+    "gulp-nsp": "^0.4.5",
+    "gulp-coveralls": "^0.1.0"
+  },
+  "scripts": {
+    "prepublish": "gulp prepublish",
+    "test": "gulp"
+  },
+  "license": "MIT"
+}
