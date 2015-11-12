@@ -136,7 +136,7 @@
 	}
 	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	jQuery.ajax({
-		url: "http://api.openweathermap.org/data/2.5/forecast/daily?id=5224151&APPID=e1078351c4ebfc96f2fb7b424f0a43fb&units=imperial&cnt=5",
+		url: "http://api.openweathermap.org/data/2.5/forecast/daily?id={id}&APPID={appid}&units=imperial&cnt=5",
 		success: function(data) {
 			console.log( data );
 			$.each(data.list, function(){
