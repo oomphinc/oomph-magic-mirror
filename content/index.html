@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Oomph Magic Mirror</title>
+
   <link rel="stylesheet" href="content/fonts.css" />
     <style>
       body
@@ -57,6 +58,7 @@
       font-size: 5em;
       padding: 1em;
       white-space: nowrap;
+      z-index: -1;
     }
     #weather {
       position: absolute;
@@ -83,6 +85,39 @@
       display: block;
       padding-bottom: 1em;
     }
+    /* The Modal (background) */
+  .modal {
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(100,100,100); /* Fallback color */
+    background-color: rgba(100,100,100,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
     #speech {
       display: none;
     }
@@ -91,6 +126,18 @@
   <body>
     <div id="clock"></div>
     <div id="weather"><ul></ul></div>
+
+    <button id="videoBtn">Press me, please.</button>
+
+    <button id="deathtouch">Don't Touch Me</button>
+
+    <div id="videoModal" class="modal">
+      <div class="modal-content">
+      <span class="close">x</span>
+      <iframe src="https://www.youtube.com/embed/4FfPa0m6WMo?showinfo=0&amp;start=50&amp;end=53&amp;rel=0&amp;" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+
     <div id="speech">
       <textarea id="transcription" readonly="readonly"></textarea>
 
@@ -231,15 +278,35 @@
     }
 
   });
-  </script>
-
-    <script type="text/javascript">
-      var u = new SpeechSynthesisUtterance();
-      u.text = 'You are next.';
+  var u = new SpeechSynthesisUtterance();
+    var phrases = [
+      'You are next',
+      'I\'ll be watching you sleep',
+      'Have you ever danced with the devil in the pale moonlight?',
+      'It puts the lotion in the basket',
+      'They all float down here. When you\'re down here with us, you\'ll float too!',
+      'Red rum! Red rum!',
+      'Come out, come out wherever you are',
+      'One. Two. Freddy\'s coming for you.',
+      'Hello! Nice to meet you! Prepare to die.'
+    ];
+    var phraseCount = phrases.length;
+    jQuery('#deathtouch').click(function() {
+      // Get all the available voices
+      var voices = window.speechSynthesis.getVoices();
+      // Choose a voice at random
+      var chosenVoice = Math.floor((Math.random() * voices.length));
+      // Choose a phrase at random
+      var chosenPhrase = Math.floor((Math.random() * phraseCount));
+      u.text = phrases[chosenPhrase];
       u.lang = 'en-US';
       u.rate = 1.2;
+      u.voice = voices[chosenVoice];
       u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
       speechSynthesis.speak(u);
-    </script>
+    });
+  </script>
+  <script src="site.js"></script>
+
   </body>
 </html>

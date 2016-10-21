@@ -16,7 +16,7 @@ var audioContext = audioContextCheck();
 var audioBuffer;
 
 var getSound = new XMLHttpRequest();
-getSound.open("get", "BurnTheWitch.wav", true);
+getSound.open("get", "footsteps1.wav", true);
 getSound.responseType = "arraybuffer";
 
 getSound.onload = function() {

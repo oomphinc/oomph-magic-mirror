@@ -24,6 +24,9 @@
     "gulp-nsp": "^0.4.5",
     "gulp-coveralls": "^0.1.0"
   },
+  "scripts": {
+    "serve": "node lib/server.js"
+  },
   "license": "MIT",
   "dependencies": {
     "router": "^1.1.4"
