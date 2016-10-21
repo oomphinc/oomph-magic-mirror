@@ -1,48 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Magic Mirror</title>
     <title>Oomph Magic Mirror</title>
 	<link rel="stylesheet" href="content/fonts.css" />
-    <link rel="stylesheet" type="text/css" href="speech.css">
-
+    <style>
+      body
+      {
+        max-width: 500px;
+        margin: 2em auto;
+        font-size: 20px;
+		background: #000;
+		color: #fff;
+		font-family: sans-serif;
+      }
+      h1
+      {
+        text-align: center;
+      }
+      .buttons-wrapper
+      {
+        text-align: center;
+      }
+      .hidden
+      {
+        display: none;
+      }
+      #transcription,
+      #log
+      {
+        display: block;
+        width: 100%;
+        height: 5em;
+        overflow-y: scroll;
+        border: 1px solid #333333;
+        line-height: 1.3em;
+      }
+      .button-demo
+      {
+        padding: 0.5em;
+        display: inline-block;
+        margin: 1em auto;
+      }
+	  #clock {
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+		  width: 50%;
+		  box-sizing: border-box;
+		  font-size: 5em;
+		  padding: 1em;
+		  white-space: nowrap;
+	  }
+	  #weather {
+		  position: absolute;
+		  bottom: 0;
+		  right: 0;
+		  width: 100%;
+		  box-sizing: border-box;
+		  font-size: 2em;
+		  padding-bottom: 1em;
+	  }
+	  #weather ul {
+		  list-style-type: none;
+		  text-align: center;
+		  display: flex;
+		  width: 100%;
+		  margin: 0;
+		  padding: 0;
+		  flex-wrap: nowrap;
+	  }
+	  #weather li {
+		  flex-grow: 1;
+	  }
+	  #weather li span {
+		  display: block;
+		  padding-bottom: 1em;
+	  }
+	  #speech {
+		  display: none;
+	  }
+    </style>
   </head>
-
   <body>
-<!--
-    <h1>Magic Mirror</h1>
-
-    <img id="start_img" src="pennywise.jpg">
-    <textarea id="transcription" readonly="readonly"></textarea>
-
-    <span>Results:</span>
-    <label><input type="radio" name="recognition-type" value="final" checked="checked" /> Final only</label>
-    <label><input type="radio" name="recognition-type" value="interim" /> Interim</label>
-
-    <h3>Log</h3>
-    <div id="log"></div>
-
-    <div class="buttons-wrapper">
-      <button id="button-play-ws" class="button-demo">Play demo</button>
-      <button id="button-stop-ws" class="button-demo">Stop demo</button>
-      <button id="clear-all" class="button-demo">Clear all</button>
-    </div>
--->
 	  <div id="clock"></div>
 	  <div id="weather"><ul></ul></div>
-	  <div id="speech"></div>
+	  <div id="speech">
+	    <textarea id="transcription" readonly="readonly"></textarea>
+
+	    <span>Results:</span>
+	    <label><input type="radio" name="recognition-type" value="final" checked="checked" /> Final only</label>
+	    <label><input type="radio" name="recognition-type" value="interim" /> Interim</label>
+
+	    <h3>Log</h3>
+	    <div id="log"></div>
+
+	    <div class="buttons-wrapper">
+	      <button id="button-play-ws" class="button-demo">Play demo</button>
+	      <button id="button-stop-ws" class="button-demo">Stop demo</button>
+	      <button id="clear-all" class="button-demo">Clear all</button>
+	    </div>
+	    <span id="ws-unsupported" class="hidden">API not supported</span>
+	</div>
+
 	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script>
       // Test browser support
-      window.SpeechRecognition = window.SpeechRecognition        ||
-        window.webkitSpeechRecognition  ||
+      window.SpeechRecognition = window.SpeechRecognition       ||
+        window.webkitSpeechRecognition ||
         null;
       if (window.SpeechRecognition === null) {
-        //document.getElementById('ws-unsupported').classList.remove('hidden');
-        //document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
-        //document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
+        document.getElementById('ws-unsupported').classList.remove('hidden');
+        document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
+        document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
       } else {
         var recognizer = new window.SpeechRecognition();
         var transcription = document.getElementById('transcription');
@@ -55,11 +126,8 @@
           for (var i = event.resultIndex; i < event.results.length; i++) {
             if (event.results[i].isFinal) {
               transcription.textContent = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
-              if (event.results[i][0].transcript === 'hello') {
-                document.getElementById("start_img").style.display = "block";
-              } else {
-                transcription.textContent += event.results[i][0].transcript;
-              }
+            } else {
+              transcription.textContent += event.results[i][0].transcript;
             }
           }
         };
@@ -70,7 +138,7 @@
         document.getElementById('button-play-ws').addEventListener('click', function() {
           // Set if we need interim results
           recognizer.interimResults = document.querySelector('input[name="recognition-type"][value="interim"]').checked;
-          try{
+          try {
             recognizer.start();
             log.innerHTML = 'Recognition started' + '<br />' + log.innerHTML;
           } catch(ex) {
@@ -86,16 +154,13 @@
           log.textContent = '';
         });
       }
-
 	function updateClock() {
 		// Gets the current time
 		var now = new Date();
-
 		// Get the hours, minutes and seconds from the current time
 		var hours = now.getHours();
 		var minutes = now.getMinutes();
 		var ampm = "AM";
-
 		// Format hours, minutes and seconds
 		if (hours > 12) {
 			hours = hours - 12;
@@ -107,15 +172,12 @@
 		if (minutes < 10) {
 			minutes = "0" + minutes;
 		}
-
 		// Gets the element we want to inject the clock into
 		var elem = document.getElementById('clock');
-
 		// Sets the elements inner HTML value to our clock data
 		elem.innerHTML = hours + ':' + minutes + ' ' + ampm;
 	}
 	setInterval('updateClock()', 200);
-
 	function weatherIcon(forecast) {
 		var icon = '';
 		switch (forecast) {
@@ -131,12 +193,11 @@
 			default:
 				icon = 'wi-day-sunny';
 		}
-
 		return icon;
 	}
 	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	jQuery.ajax({
-		url: "http://api.openweathermap.org/data/2.5/forecast/daily?id={id}&APPID={appid}&units=imperial&cnt=5",
+		url: "http://api.openweathermap.org/data/2.5/forecast/daily?id=5224151&APPID=e1078351c4ebfc96f2fb7b424f0a43fb&units=imperial&cnt=5",
 		success: function(data) {
 			console.log( data );
 			$.each(data.list, function(){
@@ -144,20 +205,32 @@
 				var month = months[dateobj.getMonth()];
 				var date = dateobj.getDate();
 				var weathericon = weatherIcon(this.weather[0].main);
-				jQuery('#weather ul').append('<li ><span class="date wi ' + weathericon + '">' + month + ' ' + date + '</span> ' + this.temp.day + '&deg;F</li>');
+				jQuery('#weather ul').append('<li><span class="date wi ' + weathericon + '">' + month + ' ' + date + '</span> ' + this.temp.day + '&deg;F</li>');
 			});
 		}
-
 	});
 	</script>
 
-    <script type="text/javascript">
-      var u = new SpeechSynthesisUtterance();
-      u.text = 'You are next.';
-      u.lang = 'en-US';
-      u.rate = 1.2;
-      u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
-      speechSynthesis.speak(u);
-    </script>
+  <script type="text/javascript">
+    var u = new SpeechSynthesisUtterance();
+    var phrases = [
+      'You are next',
+      'I\'ll be watching you sleep',
+      'Have you ever danced with the devil in the pale moonlight?',
+      'It puts the lotion in the basket',
+      'They all float down here. When you\'re down here with us, you\'ll float too!',
+      'Red rum! Red rum!',
+      'Come out, come out wherever you are',
+      'One, two, Freddy\'s coming for you.'
+    ];
+    var phraseCount = phrases.length;
+    var chosenPhrase = Math.floor((Math.random() * phraseCount));
+    u.text = phrases[chosenPhrase];
+    u.lang = 'en-US';
+    u.rate = 1.2;
+    u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
+    speechSynthesis.speak(u);
+  </script>
+
   </body>
 </html>
