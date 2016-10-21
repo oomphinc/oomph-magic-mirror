@@ -1,173 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Oomph Magic Mirror</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Oomph Magic Mirror</title>
 	<link rel="stylesheet" href="content/fonts.css" />
-    <style>
-      body
-      {
-        max-width: 500px;
-        margin: 2em auto;
-        font-size: 20px;
+		<style>
+			body
+			{
+				max-width: 500px;
+				margin: 2em auto;
+				font-size: 20px;
 		background: #000;
 		color: #fff;
 		font-family: sans-serif;
-      }
+			}
 
-      h1
-      {
-        text-align: center;
-      }
+			h1
+			{
+				text-align: center;
+			}
 
-      .buttons-wrapper
-      {
-        text-align: center;
-      }
+			.buttons-wrapper
+			{
+				text-align: center;
+			}
 
-      .hidden
-      {
-        display: none;
-      }
+			.hidden
+			{
+				display: none;
+			}
 
-      #transcription,
-      #log
-      {
-        display: block;
-        width: 100%;
-        height: 5em;
-        overflow-y: scroll;
-        border: 1px solid #333333;
-        line-height: 1.3em;
-      }
+			#transcription,
+			#log
+			{
+				display: block;
+				width: 100%;
+				height: 5em;
+				overflow-y: scroll;
+				border: 1px solid #333333;
+				line-height: 1.3em;
+			}
 
-      .button-demo
-      {
-        padding: 0.5em;
-        display: inline-block;
-        margin: 1em auto;
-      }
-	  #clock {
-		  position: absolute;
-		  top: 0;
-		  left: 0;
-		  width: 50%;
-		  box-sizing: border-box;
-		  font-size: 5em;
-		  padding: 1em;
-		  white-space: nowrap;
-	  }
-	  #weather {
-		  position: absolute;
-		  bottom: 0;
-		  right: 0;
-		  width: 100%;
-		  box-sizing: border-box;
-		  font-size: 2em;
-		  padding-bottom: 1em;
-	  }
-	  #weather ul {
-		  list-style-type: none;
-		  text-align: center;
-		  display: flex;
-		  width: 100%;
-		  margin: 0;
-		  padding: 0;
-		  flex-wrap: nowrap;
-	  }
-	  #weather li {
-		  flex-grow: 1;
-	  }
-	  #weather li span {
-		  display: block;
-		  padding-bottom: 1em;
-	  }
-	  #speech {
-		  display: none;
-	  }
-    </style>
-  </head>
-  <body>
-	  <div id="clock"></div>
-	  <div id="weather"><ul></ul></div>
-	  <div id="speech">
-	    <textarea id="transcription" readonly="readonly"></textarea>
+			.button-demo
+			{
+				padding: 0.5em;
+				display: inline-block;
+				margin: 1em auto;
+			}
+		#clock {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 50%;
+			box-sizing: border-box;
+			font-size: 5em;
+			padding: 1em;
+			white-space: nowrap;
+		}
+		#weather {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 100%;
+			box-sizing: border-box;
+			font-size: 2em;
+			padding-bottom: 1em;
+		}
+		#weather ul {
+			list-style-type: none;
+			text-align: center;
+			display: flex;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			flex-wrap: nowrap;
+		}
+		#weather li {
+			flex-grow: 1;
+		}
+		#weather li span {
+			display: block;
+			padding-bottom: 1em;
+		}
+		#speech {
+			display: none;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="clock"></div>
+		<div id="weather"><ul></ul></div>
+		<div id="speech">
+			<textarea id="transcription" readonly="readonly"></textarea>
 
-	    <span>Results:</span>
-	    <label><input type="radio" name="recognition-type" value="final" checked="checked" /> Final only</label>
-	    <label><input type="radio" name="recognition-type" value="interim" /> Interim</label>
+			<span>Results:</span>
+			<label><input type="radio" name="recognition-type" value="final" checked="checked" /> Final only</label>
+			<label><input type="radio" name="recognition-type" value="interim" /> Interim</label>
 
-	    <h3>Log</h3>
-	    <div id="log"></div>
+			<h3>Log</h3>
+			<div id="log"></div>
 
-	    <div class="buttons-wrapper">
-	      <button id="button-play-ws" class="button-demo">Play demo</button>
-	      <button id="button-stop-ws" class="button-demo">Stop demo</button>
-	      <button id="clear-all" class="button-demo">Clear all</button>
-	    </div>
-	    <span id="ws-unsupported" class="hidden">API not supported</span>
+			<div class="buttons-wrapper">
+				<button id="button-play-ws" class="button-demo">Play demo</button>
+				<button id="button-stop-ws" class="button-demo">Stop demo</button>
+				<button id="clear-all" class="button-demo">Clear all</button>
+			</div>
+			<span id="ws-unsupported" class="hidden">API not supported</span>
 	</div>
 
 	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script>
-      // Test browser support
-      window.SpeechRecognition = window.SpeechRecognition       ||
-        window.webkitSpeechRecognition ||
-        null;
+		<script>
+			// Test browser support
+			window.SpeechRecognition = window.SpeechRecognition			 ||
+				window.webkitSpeechRecognition ||
+				null;
 
-      if (window.SpeechRecognition === null) {
-        document.getElementById('ws-unsupported').classList.remove('hidden');
-        document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
-        document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
-      } else {
-        var recognizer = new window.SpeechRecognition();
-        var transcription = document.getElementById('transcription');
-        var log = document.getElementById('log');
+			if (window.SpeechRecognition === null) {
+				document.getElementById('ws-unsupported').classList.remove('hidden');
+				document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
+				document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
+			} else {
+				var recognizer = new window.SpeechRecognition();
+				var transcription = document.getElementById('transcription');
+				var log = document.getElementById('log');
 
-        // Recogniser doesn't stop listening even if the user pauses
-        recognizer.continuous = true;
+				// Recogniser doesn't stop listening even if the user pauses
+				recognizer.continuous = true;
 
-        // Start recognising
-        recognizer.onresult = function(event) {
-          transcription.textContent = '';
+				// Start recognising
+				recognizer.onresult = function(event) {
+					transcription.textContent = '';
 
-          for (var i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) {
-              transcription.textContent = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
-            } else {
-              transcription.textContent += event.results[i][0].transcript;
-            }
-          }
-        };
+					for (var i = event.resultIndex; i < event.results.length; i++) {
+						if (event.results[i].isFinal) {
+							transcription.textContent = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
+						} else {
+							transcription.textContent += event.results[i][0].transcript;
+						}
+					}
+				};
 
-        // Listen for errors
-        recognizer.onerror = function(event) {
-          log.innerHTML = 'Recognition error: ' + event.message + '<br />' + log.innerHTML;
-        };
+				// Listen for errors
+				recognizer.onerror = function(event) {
+					log.innerHTML = 'Recognition error: ' + event.message + '<br />' + log.innerHTML;
+				};
 
-        document.getElementById('button-play-ws').addEventListener('click', function() {
-          // Set if we need interim results
-          recognizer.interimResults = document.querySelector('input[name="recognition-type"][value="interim"]').checked;
+				document.getElementById('button-play-ws').addEventListener('click', function() {
+					// Set if we need interim results
+					recognizer.interimResults = document.querySelector('input[name="recognition-type"][value="interim"]').checked;
 
-          try {
-            recognizer.start();
-            log.innerHTML = 'Recognition started' + '<br />' + log.innerHTML;
-          } catch(ex) {
-            log.innerHTML = 'Recognition error: ' + ex.message + '<br />' + log.innerHTML;
-          }
-        });
+					try {
+						recognizer.start();
+						log.innerHTML = 'Recognition started' + '<br />' + log.innerHTML;
+					} catch(ex) {
+						log.innerHTML = 'Recognition error: ' + ex.message + '<br />' + log.innerHTML;
+					}
+				});
 
-        document.getElementById('button-stop-ws').addEventListener('click', function() {
-          recognizer.stop();
-          log.innerHTML = 'Recognition stopped' + '<br />' + log.innerHTML;
-        });
+				document.getElementById('button-stop-ws').addEventListener('click', function() {
+					recognizer.stop();
+					log.innerHTML = 'Recognition stopped' + '<br />' + log.innerHTML;
+				});
 
-        document.getElementById('clear-all').addEventListener('click', function() {
-          transcription.textContent = '';
-          log.textContent = '';
-        });
-      }
+				document.getElementById('clear-all').addEventListener('click', function() {
+					transcription.textContent = '';
+					log.textContent = '';
+				});
+			}
 
 	function updateClock() {
 		// Gets the current time
@@ -233,13 +233,13 @@
 	});
 	</script>
 
-    <script type="text/javascript">
-      var u = new SpeechSynthesisUtterance();
-      u.text = 'You are next.';
-      u.lang = 'en-US';
-      u.rate = 1.2;
-      u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
-      speechSynthesis.speak(u);
-    </script>
-  </body>
+		<script type="text/javascript">
+			var u = new SpeechSynthesisUtterance();
+			u.text = 'You are next.';
+			u.lang = 'en-US';
+			u.rate = 1.2;
+			u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
+			speechSynthesis.speak(u);
+		</script>
+	</body>
 </html>
