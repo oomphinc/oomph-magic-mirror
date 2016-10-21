@@ -52,6 +52,7 @@
 		  font-size: 5em;
 		  padding: 1em;
 		  white-space: nowrap;
+      z-index: -1;
 	  }
 	  #weather {
 		  position: absolute;
@@ -81,10 +82,19 @@
 	  #speech {
 		  display: none;
 	  }
+    #deathtouch {
+      background-color: red;
+      border: none;
+      color: black;
+      padding: 10px;
+      position: absolute;
+      top: 400px; left: 30px;
+    }
     </style>
   </head>
   <body>
 	  <div id="clock"></div>
+    <button id="deathtouch">Don't Touch Me</button>
 	  <div id="weather"><ul></ul></div>
 	  <div id="speech">
 	    <textarea id="transcription" readonly="readonly"></textarea>
@@ -224,12 +234,14 @@
       'One, two, Freddy\'s coming for you.'
     ];
     var phraseCount = phrases.length;
-    var chosenPhrase = Math.floor((Math.random() * phraseCount));
-    u.text = phrases[chosenPhrase];
-    u.lang = 'en-US';
-    u.rate = 1.2;
-    u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
-    speechSynthesis.speak(u);
+    jQuery('#deathtouch').click(function() {
+      var chosenPhrase = Math.floor((Math.random() * phraseCount));
+      u.text = phrases[chosenPhrase];
+      u.lang = 'en-US';
+      u.rate = 1.2;
+      u.onend = function(event) { alert('Finished in ' + event.elapsedTime + ' seconds.'); }
+      speechSynthesis.speak(u);
+    });
   </script>
 
   </body>
